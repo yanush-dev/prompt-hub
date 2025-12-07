@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <title>Prompt Hub – Quick & Pro</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    :root { color-scheme: light dark; }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, system-ui, BlinkMacSystemFont, "SF Pro Text", sans-serif;
+      background: #f5f5f7;
+      color: #111827;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+    }
+    .wrap {
+      width: 100%;
+      max-width: 620px;
+      padding: 16px;
+    }
+    .card {
+      background: #ffffff;
+      border-radius: 18px;
+      border: 1px solid #e5e7eb;
+      padding: 14px 14px 16px;
+      box-shadow: 0 18px 40px rgba(15, 23, 42, 0.12);
+    }
+    .title {
+      font-size: 17px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    .hint {
+      font-size: 11px;
+      color: #6b7280;
+      margin-bottom: 10px;
+    }
+    .tabs {
+      display: inline-flex;
+      border-radius: 999px;
+      padding: 3px;
+      background: #f3f4f6;
+      margin-bottom: 10px;
+    }
+    .tab {
+      border: none;
+      background: transparent;
+      border-radius: 999px;
+      padding: 5px 12px;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      color: #4b5563;
+    }
+    .tab.active {
+      background: #111827;
+      color: #f9fafb;
+    }
+    label {
+      display: block;
+      margin-top: 10px;
+      margin-bottom: 4px;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #6b7280;
+    }
+    textarea, input, select {
+      width: 100%;
+      border-radius: 11px;
+      border: 1px solid #d1d5db;
+      padding: 7px 10px;
+      font-size: 14px;
+      background: #ffffff;
+      color: #111827;
+      outline: none;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+    textarea {
+      resize: vertical;
+    }
+    textarea::placeholder,
+    input::placeholder {
+      color: #9ca3af;
+    }
+    textarea:focus,
+    input:focus,
+    select:focus {
+      border-color: #4f46e5;
+      box-shadow: 0 0 0 1px rgba(79, 70, 229, 0.15);
+    }
+    select {
+      padding-right: 26px;
+      background-image:
+        linear-gradient(45deg, transparent 50%, #9ca3af 50%),
+        linear-gradient(135deg, #9ca3af 50%, transparent 50%);
+      background-position:
+        calc(100% - 14px) 50%,
+        calc(100% - 8px) 50%;
+      background-size: 6px 6px, 6px 6px;
+      background-repeat: no-repeat;
+    }
+    optgroup { font-style: normal; color: #4b5563; }
+    .section {
+      margin-top: 4px;
+    }
+    .section[hidden] { display: none; }
+    .warning {
+      font-size: 11px;
+      color: #b45309;
+      margin-top: 4px;
+      display: none;
+    }
+    .buttons {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 14px;
+      margin-bottom: 10px;
+    }
+    button {
+      border-radius: 11px;
+      border: none;
+      padding: 8px 10px;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      cursor: pointer;
+    }
+    #generate {
+      background: #111827;
+      color: #f9fafb;
+    }
+    #copy {
+      background: #f3f4f6;
+      color: #111827;
+      border: 1px solid #e5e7eb;
+    }
+    #output {
+      font-family: ui-monospace, Menlo, SFMono-Regular, Consolas, "Roboto Mono", monospace;
+      font-size: 12px;
+      min-height: 150px;
+      background: #f9fafb;
+    }
+    .footer {
+      font-size: 11px;
+      color: #6b7280;
+      margin-top: 4px;
+    }
+    @media (prefers-color-scheme: dark) {
+      body { background: #020617; color: #e5e7eb; }
+      .card {
+        background: #020617;
+        border-color: #1f2933;
+        box-shadow: 0 18px 40px rgba(0,0,0,0.75);
+      }
+      textarea, input, select {
+        background: #020617;
+        border-color: #374151;
+        color: #e5e7eb;
+      }
+      #output {
+        background: #020617;
+      }
+      #copy {
+        background: #020617;
+        border-color: #374151;
+        color: #e5e7eb;
+      }
+      .tabs { background: #020617; border: 1px solid #1f2933; }
+      .tab { color: #9ca3af; }
+      .tab.active { background: #f9fafb; color: #020617; }
+      .warning { color: #fbbf24; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <div class="title">Prompt Hub</div>
+      <div class="hint">Wybierz tryb: <strong>Quick</strong>, gdy gadasz po ludzku; <strong>Pro</strong>, gdy chcesz maksymalnej precyzji.</div>
+
+      <div class="tabs">
+        <button class="tab active" data-tab="quick">Quick (monolog)</button>
+        <button class="tab" data-tab="pro">Pro (kontekst / cel / rola)</button>
+      </div>
+
+      <!-- QUICK SECTION -->
+      <div class="section" id="section-quick">
+        <label for="q_etykieta">Projekt / etykieta (opcjonalnie)</label>
+        <textarea id="q_etykieta" rows="2" placeholder="Np. „książka dopamina”, „Babel – strona WWW”, „życie prywatne – decyzja”"></textarea>
+
+        <label for="q_monolog">To, co chcę powiedzieć (monolog)</label>
+        <textarea id="q_monolog" rows="5" placeholder="Tu dyktujesz albo wklejasz swój chaos: myśli, problem, kontekst, pytania – wszystko w jednym."></textarea>
+
+        <label for="q_efekt">Mniej więcej czego chcę (opcjonalnie)</label>
+        <textarea id="q_efekt" rows="3" placeholder="Np. „chcę, żebyś z tego zrobił plan działania”, „chcę brutalnej analizy”, „chcę szkicu rozdziału”"></textarea>
+
+        <label for="q_tryb">Jak bardzo mam przejąć stery</label>
+        <select id="q_tryb">
+          <option value="auto">Maksymalnie – sam wyciągnij kontekst, cel, rolę i format, wypunktuj to i zaproponuj, co dalej.</option>
+          <option value="balanced">Średnio – wyciągnij kontekst i cel, zaproponuj 2–3 możliwe kierunki i poproś mnie o wybór.</option>
+          <option value="low">Minimalnie – streść to, co powiedziałem, wypunktuj pytania doprecyzowujące i poczekaj na moje odpowiedzi.</option>
+        </select>
+      </div>
+
+      <!-- PRO SECTION -->
+      <div class="section" id="section-pro" hidden>
+        <div class="hint">Tu rozpisujesz wszystko precyzyjnie. Idealne do książki, strony WWW, ofert itd.</div>
+
+        <label for="p_kontekst">Kontekst</label>
+        <textarea id="p_kontekst" rows="3" placeholder="1–3 zdania: jaki projekt / obszar + czego dotyczy ta sprawa?"></textarea>
+        <div id="p_warnKontekst" class="warning">Kontekst jest bardzo krótki. Dodaj 1–2 zdania, żeby model nie musiał zgadywać.</div>
+
+        <label for="p_cel">Cel / zadanie</label>
+        <textarea id="p_cel" rows="3" placeholder="Czego konkretnie chcesz z tej odpowiedzi (np. decyzji, struktury rozdziału, krytyki)?"></textarea>
+        <div id="p_warnCel" class="warning">Cel jest bardzo ogólny. Doprecyzuj, co ma być efektem tej jednej odpowiedzi.</div>
+
+        <label for="p_rola">Rola (wybierz lub zostaw domyślną)</label>
+        <select id="p_rola">
+          <option value="">Domyślna: krytyczny partner</option>
+          <optgroup label="Pisanie i edycja">
+            <option>Brutalny redaktor</option>
+            <option>Delikatny redaktor</option>
+            <option>Ghostwriter</option>
+            <option>Korektor stylistyczny</option>
+            <option>Copywriter sprzedażowy</option>
+          </optgroup>
+          <optgroup label="Strategia i biznes">
+            <option>Konsultant biznesowy</option>
+            <option>Strateg marketingowy</option>
+            <option>Analityk danych</option>
+            <option>Doradca cenowy</option>
+            <option>Projektant oferty</option>
+          </optgroup>
+          <optgroup label="Psychologia i perspektywa (informacyjnie)">
+            <option>Perspektywa psychologiczna</option>
+            <option>Coach na chłodno</option>
+            <option>Analiza zachowań / nawyków</option>
+          </optgroup>
+          <optgroup label="Edukacja i tłumaczenie">
+            <option>Nauczyciel tłumaczący jak dziecku</option>
+            <option>Wykładowca akademicki</option>
+            <option>Mentor początkującego</option>
+          </optgroup>
+          <optgroup label="Projektowanie i produkt">
+            <option>UX designer</option>
+            <option>UI designer</option>
+            <option>Art director</option>
+            <option>Projektant doświadczenia gościa hostelu</option>
+          </optgroup>
+          <optgroup label="Technologia i kod">
+            <option>Senior developer</option>
+            <option>Architekt systemów</option>
+            <option>Konsultant integracji narzędzi</option>
+          </optgroup>
+          <optgroup label="Krytyka i myślenie">
+            <option>Adwokat diabła</option>
+            <option>Krytyk założeń</option>
+            <option>Recenzent logiczny</option>
+          </optgroup>
+          <optgroup label="Własna rola">
+            <option value="custom">Inna (opiszę niżej)</option>
+          </optgroup>
+        </select>
+        <input id="p_rolaCustom" type="text" placeholder="Jeśli wybrałeś 'Inna', opisz rolę tutaj">
+
+        <label for="p_format">Format wyniku (opcjonalnie)</label>
+        <select id="p_format">
+          <option value="">Domyślny: interpretacja + lista punktów + decyzje</option>
+          <option>Lista punktów (max 10)</option>
+          <option>Tabela porównawcza</option>
+          <option>Opis plakatu / layoutu</option>
+          <option>Gotowy tekst (np. rozdział / post)</option>
+          <option>Diagnoza + co zmienić</option>
+          <option value="custom">Inny (opiszę niżej)</option>
+        </select>
+        <input id="p_formatCustom" type="text" placeholder="Jeśli wybrałeś 'Inny', opisz format tutaj">
+
+        <label for="p_instrukcje">Dodatkowe instrukcje dla tego zadania (opcjonalnie)</label>
+        <textarea id="p_instrukcje" rows="3" placeholder="Np. „najpierw oceń prompt, potem zaproponuj poprawki”, „pokaż najpierw założenia, potem wnioski” itd."></textarea>
+
+        <label for="p_dodatkowe">Dodatkowy materiał / treść (opcjonalnie)</label>
+        <textarea id="p_dodatkowe" rows="4" placeholder="Tu możesz wkleić fragment tekstu, notatki, opis sytuacji itd."></textarea>
+      </div>
+
+      <div class="buttons">
+        <button id="generate">Generuj prompt</button>
+        <button id="copy">Kopiuj</button>
+      </div>
+
+      <label for="output">Wynik – prompt do wklejenia w ChatGPT</label>
+      <textarea id="output" rows="9" readonly></textarea>
+      <div class="footer">
+        Najpierw wybierz tryb (Quick / Pro), wypełnij pola, kliknij „Generuj”, potem „Kopiuj” i wklej całość do czatu.
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const tabs = document.querySelectorAll('.tab');
+    const sectionQuick = document.getElementById('section-quick');
+    const sectionPro = document.getElementById('section-pro');
+    let currentMode = 'quick';
+
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        tabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        const mode = tab.dataset.tab;
+        currentMode = mode;
+        if (mode === 'quick') {
+          sectionQuick.hidden = false;
+          sectionPro.hidden = true;
+        } else {
+          sectionQuick.hidden = true;
+          sectionPro.hidden = false;
+        }
+        document.getElementById('output').value = '';
+      });
+    });
+
+    function buildQuick() {
+      const etykieta = document.getElementById("q_etykieta").value.trim();
+      const monolog = document.getElementById("q_monolog").value.trim();
+      const efekt = document.getElementById("q_efekt").value.trim();
+      const tryb = document.getElementById("q_tryb").value;
+
+      let instrukcjeTryb = "";
+      if (tryb === "auto") {
+        instrukcjeTryb = `
+TRYB PRACY:
+- Maksymalna inicjatywa po stronie modelu.
+- Twoje kroki:
+  1) Przeczytaj mój monolog i streszczenie efektu, jeśli jest.
+  2) Wyciągnij i nazwij: KONTEKST, CEL, sugerowaną ROLĘ, sugerowany FORMAT odpowiedzi.
+  3) Wypunktuj brakujące informacje lub niejasności.
+  4) Zaproponuj konkretny sposób pracy i od razu zrób pierwszy krok (np. pierwszą analizę / propozycję).`;
+      } else if (tryb === "balanced") {
+        instrukcjeTryb = `
+TRYB PRACY:
+- Średnia inicjatywa po stronie modelu.
+- Twoje kroki:
+  1) Przeczytaj mój monolog i streszczenie efektu, jeśli jest.
+  2) Wyciągnij i nazwij: KONTEKST i CEL.
+  3) Zaproponuj 2–3 możliwe ROLE i FORMATY odpowiedzi (z krótkim uzasadnieniem).
+  4) Zadaj mi 2–4 pytania doprecyzowujące i wstrzymaj się z większymi wnioskami do mojej odpowiedzi.`;
+      } else {
+        instrukcjeTryb = `
+TRYB PRACY:
+- Minimalna inicjatywa po stronie modelu.
+- Twoje kroki:
+  1) Przeczytaj mój monolog i streszczenie efektu, jeśli jest.
+  2) Zrób krótkie streszczenie w 5–8 zdaniach.
+  3) Wypunktuj, co jest jasne, a co niejasne.
+  4) Zadaj mi konkretne pytania doprecyzowujące i poczekaj na odpowiedź przed dalszym działaniem.`;
+      }
+
+      const prompt = `[GPT_WEBPROMPT_QUICK_V1]
+
+INSTRUKCJE DLA MODELU AI:
+- Ta wiadomość pochodzi z mojego „quick prompt buildera” – mówię tu po ludzku, często chaotycznie.
+- Najpierw przeczytaj całość, a potem wykonaj kroki z sekcji TRYB PRACY.
+- Nie zakładaj, że KONTEKST, CEL, ROLA i FORMAT są już dobrze nazwane – to jest część Twojej pracy.
+${instrukcjeTryb}
+
+PROJEKT / ETYKIETA (jeśli jest):
+${etykieta || "(brak – spróbuj sam nazwać projekt / obszar na podstawie monologu)"} 
+
+MÓJ SUROWY MONOLOG:
+${monolog || "(puste – jeśli to widzisz, poproś mnie, żebym opisał sytuację po ludzku, bez struktury)"}
+
+MNIEJ WIĘCEJ CZEGO CHCĘ:
+${efekt || "(nie opisałem wprost – zaproponuj 2–3 możliwe cele na podstawie monologu)"}        
+`;
+      return prompt;
+    }
+
+    function updateProWarnings() {
+      const kontekst = document.getElementById("p_kontekst").value.trim();
+      const cel = document.getElementById("p_cel").value.trim();
+      const warnKontekst = document.getElementById("p_warnKontekst");
+      const warnCel = document.getElementById("p_warnCel");
+      warnKontekst.style.display = kontekst && kontekst.length < 25 ? "block" : "none";
+      warnCel.style.display = cel && cel.length < 25 ? "block" : "none";
+    }
+
+    function buildPro() {
+      const kontekst = document.getElementById("p_kontekst").value.trim();
+      const cel = document.getElementById("p_cel").value.trim();
+      const rolaSel = document.getElementById("p_rola").value;
+      const rolaCustom = document.getElementById("p_rolaCustom").value.trim();
+      const formatSel = document.getElementById("p_format").value;
+      const formatCustom = document.getElementById("p_formatCustom").value.trim();
+      const instrukcje = document.getElementById("p_instrukcje").value.trim();
+      const dodatkowe = document.getElementById("p_dodatkowe").value.trim();
+
+      let rola = rolaSel === "custom" ? rolaCustom : rolaSel;
+      let format = formatSel === "custom" ? formatCustom : formatSel;
+
+      let prompt = `[GPT_WEBPROMPT_V2]
+
+INSTRUKCJE DLA MODELU AI:
+- Ta wiadomość pochodzi z mojego własnego „prompt buildera”.
+- Najpierw przeczytaj KONTEKST i CEL/ZADANIE, traktuj je jako najważniejsze.
+- Jeśli KONTEKST lub CEL/ZADANIE są zbyt ogólne, zacznij od krótkiego podsumowania i wypunktuj, jakich informacji brakuje.
+- Jeśli ROLA jest pusta, przyjmij domyślną: krytyczny partner (brutalny redaktor + konsultant biznesowy + adwokat diabła).
+- Jeśli FORMAT_WYNIKU jest pusty, sam zaproponuj najlepszy format i powiedz, jaki wybrałeś.
+- Domyślny styl odpowiedzi: myślenie krytyczne, bez automatycznego potwierdzania moich założeń.
+
+KONTEKST:
+${kontekst || "(nie podałem – zacznij od dopytania o projekt / obszar i sytuację)"}
+
+CEL / ZADANIE:
+${cel || "(nie podałem – pomóż mi doprecyzować, jaki ma być efekt tej odpowiedzi)"}
+
+ROLA:
+${rola || "(domyślna: krytyczny partner)"}
+
+FORMAT_WYNIKU:
+${format || "(domyślny: interpretacja + lista punktów + decyzje)"}
+`;
+
+      prompt += `
+DODATKOWE INSTRUKCJE DLA TEGO ZADANIA:
+${instrukcje || "(brak – jeśli widzisz niejasności w celu lub kontekście, najpierw je wypunktuj, potem zaproponuj sposób pracy)"}
+`;
+
+      if (dodatkowe) {
+        prompt += `
+DODATKOWY MATERIAŁ / TREŚĆ:
+${dodatkowe}`;
+      }
+
+      updateProWarnings();
+      return prompt;
+    }
+
+    document.getElementById("p_kontekst").addEventListener("input", updateProWarnings);
+    document.getElementById("p_cel").addEventListener("input", updateProWarnings);
+
+    document.getElementById("generate").addEventListener("click", () => {
+      const out = document.getElementById("output");
+      let prompt = "";
+      if (currentMode === "quick") {
+        prompt = buildQuick();
+      } else {
+        prompt = buildPro();
+      }
+      out.value = prompt;
+    });
+
+    document.getElementById("copy").addEventListener("click", () => {
+      const out = document.getElementById("output");
+      if (!out.value.trim()) {
+        if (currentMode === "quick") {
+          out.value = buildQuick();
+        } else {
+          out.value = buildPro();
+        }
+      }
+      out.focus();
+      out.select();
+      try {
+        document.execCommand("copy");
+      } catch (e) {}
+    });
+  </script>
+</body>
+</html>

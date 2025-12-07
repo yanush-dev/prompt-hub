@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<title>Babel Hostel – Podgląd (pełny projekt)</title>
+<style>
+  :root{
+    --bg:#f5f6f8;
+    --card:#fff;
+    --muted:#475569;
+    --border:rgba(12,12,13,.12);
+    --brand:#2563eb;
+    --radius:12px;
+    --gap:8px;
+    --fs:clamp(12px,3vw,14px);
+    --font:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+  }
+  *{box-sizing:border-box;font-family:var(--font);} 
+  html{height:100%;-webkit-text-size-adjust:100%;}
+  body{height:100%;margin:0;background:var(--bg);color:#0f172a;display:flex;flex-direction:column;align-items:center;}
+
+  #toggleView{margin:10px 0;padding:8px 14px;background:var(--brand);color:#fff;border:none;border-radius:8px;cursor:pointer;font-weight:600;font-size:16px;transition:background .2s;z-index:999;position:fixed;top:10px;right:10px;}
+  #toggleView:hover{background:#1e4fd0;}
+
+  .preview{width:100%;max-width:420px;min-height:100dvh;display:flex;flex-direction:column;background:var(--card);border:1px solid #e5e7eb;border-radius:24px;box-shadow:0 6px 24px rgba(0,0,0,.08);overflow:hidden;transition:all .3s ease;}
+  body.desktop .preview{max-width:960px;}
+
+  .resv-grid{display:grid;grid-template-columns:repeat(2,1fr);grid-auto-rows:64px;gap:var(--gap);padding:10px;background:#f9fafb;flex:1 1 auto;position:relative;z-index:3;}
+  body.desktop .resv-grid{grid-template-columns:repeat(5,1fr);grid-auto-rows:80px;}
+
+  .resv-item{display:flex;flex-direction:column;justify-content:center;align-items:flex-start;padding:8px;border:1px solid var(--border);border-radius:var(--radius);background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.06);cursor:pointer;transition:transform .12s ease, background .2s ease, color .2s ease;font-family:var(--font);-webkit-tap-highlight-color:transparent;touch-action:manipulation;position:relative;z-index:1;}
+  .resv-item strong{font-size:var(--fs);line-height:1.3;text-align:left;font-family:var(--font);} 
+  .resv-prices{display:flex;gap:6px;margin-top:4px;align-items:center;justify-content:flex-start;}
+  .pill{display:inline-flex;align-items:center;justify-content:center;background:rgba(37,99,235,.08);border-radius:8px;padding:2px 6px;font-size:calc(var(--fs) - 1px);font-family:var(--font);} 
+  .resv-item.is-selected{background:var(--brand);color:#fff;border-color:var(--brand);} 
+  .resv-item.is-selected .pill{background:rgba(255,255,255,.25);} 
+
+  .modal{position:sticky;bottom:0;background:#fff;border-top:1px solid var(--border);border-radius:16px 16px 0 0;box-shadow:0 -8px 20px rgba(0,0,0,.12);padding:10px 8px calc(10px + env(safe-area-inset-bottom)) 8px;font-family:var(--font);transition:all .3s ease;z-index:2;}
+  body.desktop .modal{position:relative;bottom:auto;border-radius:16px;margin:20px auto;width:90%;box-shadow:0 6px 24px rgba(0,0,0,.1);} 
+
+  .form-row.inline-2{display:grid;grid-template-columns:1fr 1fr;gap:6px;align-items:center;font-family:var(--font);} 
+  .f-field{display:flex;flex-direction:column;font-family:var(--font);} 
+
+  input, select, textarea{
+    -webkit-appearance:none;appearance:none;width:100%;border:1px solid var(--border);background:#fafafc;border-radius:10px;
+    padding:10px 12px;font-size:16px;line-height:1.35;font-family:var(--font);
+  }
+  input::placeholder, select::placeholder, textarea::placeholder{color:#64748b;font-weight:500;font-family:var(--font);} 
+  input:focus-visible, select:focus-visible, textarea:focus-visible{
+    outline:none;box-shadow:0 0 0 2px #fff,0 0 0 3px var(--brand);border-color:var(--brand);background:#fff;
+  }
+
+  .form-row-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin-top:6px;font-family:var(--font);} 
+
+  #qtyWrap{display:flex;align-items:center;gap:6px;font-family:var(--font);} 
+  #qty{min-width:0;width:100%;}
+  #price{font-weight:700;color:var(--brand);white-space:nowrap;font-family:var(--font);} 
+  .modal-actions{display:flex;justify-content:center;margin-top:8px;font-family:var(--font);} 
+  .m-btn{border:1px solid rgba(12,12,13,.14);background:#fff;border-radius:10px;padding:9px 12px;font-weight:700;cursor:pointer;font-size:16px;font-family:var(--font);} 
+  .m-btn.primary{background:var(--brand);border-color:var(--brand);color:#fff;} 
+</style>
+</head>
+<body>
+  <button id="toggleView">Przełącz widok (Mobile/Desktop)</button>
+  <div class="preview">
+    <div class="resv-grid" id="grid">
+      <button type="button" class="resv-item is-selected" data-capacity="2"><strong>PARIS • 2 łóżka / 1 pokój</strong><div class="resv-prices"><span class="pill">185 PLN</span><span class="pill">200 PLN</span></div></button>
+      <button type="button" class="resv-item" data-capacity="2"><strong>GWARNA1 • 2 łóżka / 1 pokój</strong><div class="resv-prices"><span class="pill">230 PLN</span><span class="pill">260 PLN</span></div></button>
+      <button type="button" class="resv-item" data-capacity="3"><strong>GWARNA2 • 2 łóżka / 3 osoby</strong><div class="resv-prices"><span class="pill">280 PLN</span><span class="pill">310 PLN</span></div></button>
+      <button type="button" class="resv-item" data-capacity="3"><strong>GWARNA3 • 2 łóżka / 3 osoby</strong><div class="resv-prices"><span class="pill">280 PLN</span><span class="pill">310 PLN</span></div></button>
+      <button type="button" class="resv-item" data-capacity="2"><strong>GWARNA4 • 2 łóżka / 1 pokój</strong><div class="resv-prices"><span class="pill">230 PLN</span><span class="pill">260 PLN</span></div></button>
+      <button type="button" class="resv-item" data-capacity="2"><strong>GWARNA5 • 2 łóżka / 1 pokój</strong><div class="resv-prices"><span class="pill">230 PLN</span><span class="pill">260 PLN</span></div></button>
+      <button type="button" class="resv-item" data-capacity="10"><strong>NEW YORK • 10 łóżek</strong><div class="resv-prices"><span class="pill">60 PLN</span><span class="pill">65 PLN</span></div></button>
+      <button type="button" class="resv-item" data-capacity="10"><strong>TOKYO • 10 łóżek</strong><div class="resv-prices"><span class="pill">60 PLN</span><span class="pill">65 PLN</span></div></button>
+      <button type="button" class="resv-item" data-capacity="8"><strong>SYDNEY • 8 łóżek</strong><div class="resv-prices"><span class="pill">65 PLN</span><span class="pill">70 PLN</span></div></button>
+      <button type="button" class="resv-item" data-capacity="4"><strong>LONDON • 4 łóżka</strong><div class="resv-prices"><span class="pill">100 PLN</span><span class="pill">110 PLN</span></div></button>
+    </div>
+
+    <div class="modal" id="modal">
+      <div class="form-row inline-2">
+        <div class="f-field"><input id="from" required type="date" placeholder="📅 Data przyjazdu"></div>
+        <div class="f-field"><input id="to" required type="date" placeholder="📅 Data wyjazdu"></div>
+        <div class="f-field" style="grid-column:1 / span 1"><div id="qtyWrap"><select id="qty"><option value="1">👥 1 osoba</option><option value="2">👥 2 osoby</option></select></div></div>
+        <div class="f-field" style="grid-column:2 / span 1"><div id="price">≈ 195 PLN / noc</div></div>
+      </div>
+
+      <div class="form-row-fields">
+        <div class="f-field"><input id="phone" required type="tel" placeholder="📞 Numer kontaktowy (np. +48 600 123 456)"></div>
+        <div class="f-field"><input id="email" required type="email" placeholder="✉️ E‑mail"></div>
+        <div class="f-field"><input id="name" required type="text" placeholder="👤 Imię i nazwisko"></div>
+        <div class="f-field"><textarea id="notes" placeholder="📝 Uwagi (opcjonalnie)" rows="1"></textarea></div>
+      </div>
+
+      <div class="modal-actions"><button class="m-btn primary" id="sendBtn">Wyślij</button></div>
+    </div>
+  </div>
+
+<script>
+(function(){
+  // --- Hardening: fail-safe logging so local-file errors are visible ---
+  const log = (...a)=>{ try{ console.log('[BabelPreview]', ...a); }catch(_){} };
+
+  const grid=document.getElementById('grid');
+  const qty=document.getElementById('qty');
+  const from=document.getElementById('from');
+  const to=document.getElementById('to');
+  const price=document.getElementById('price');
+  const toggle=document.getElementById('toggleView');
+  if(!grid||!qty||!from||!to||!price||!toggle){ log('Missing critical node(s)'); return; }
+
+  toggle.addEventListener('click',()=>{document.body.classList.toggle('desktop');});
+
+  const pad=n=>String(n).padStart(2,'0');
+  const fmt=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+  const today=new Date(); const depart=new Date(today); depart.setDate(depart.getDate()+2); const tomorrow=new Date(today); tomorrow.setDate(tomorrow.getDate()+1);
+  from.min=fmt(today); from.value=fmt(today); to.min=fmt(tomorrow); to.value=fmt(depart);
+  from.addEventListener('change',()=>{const f=new Date(from.value); if(isNaN(f)) return; const minTo=new Date(f); minTo.setDate(minTo.getDate()+1); const minStr=fmt(minTo); to.min=minStr; if(!to.value||to.value<minStr){ to.value=minStr; }});
+
+  function rebuildQty(max){ qty.innerHTML=''; for(let i=1;i<=max;i++){ const o=document.createElement('option'); o.value=i; o.textContent='👥 '+i+' '+(i===1?'osoba':'osoby'); qty.appendChild(o);} }
+  function selectedTile(){ return grid.querySelector('.resv-item.is-selected') || grid.querySelector('.resv-item'); }
+  function applyQty(){ const s=selectedTile(); if(!s) return; const cap=parseInt(s.getAttribute('data-capacity')||'1',10); const prev=qty.value||'1'; rebuildQty(cap); qty.value=(parseInt(prev,10)>cap?'1':prev); }
+
+  function updatePrice(){
+    const s=selectedTile(); if(!s) return; const label=s.querySelector('strong')?.textContent||'';
+    if(/PARIS|GWARNA/.test(label)){
+      const pills=s.querySelectorAll('.pill'); const txt=(pills[0]?.textContent||'')+(pills[1]?' / '+pills[1].textContent:'')+' / noc'; price.textContent='≈ '+txt; return;
+    }
+    const base=parseFloat(s.querySelector('.pill')?.textContent||'0'); const count=parseInt(qty.value||'1',10); price.textContent='≈ '+(base*count).toFixed(0)+' PLN / noc';
+  }
+
+  // --- Selection handlers ---
+  function activateTile(b){
+    grid.querySelectorAll('.resv-item').forEach(x=>x.classList.remove('is-selected'));
+    b.classList.add('is-selected');
+    applyQty();
+    updatePrice();
+    log('Selected:', b.querySelector('strong')?.textContent||b.dataset.id);
+  }
+  function handleActivate(e){
+    let b = e.target && e.target.closest ? e.target.closest('.resv-item') : null;
+    if(!b && e.changedTouches && e.changedTouches.length){
+      const t = e.changedTouches[0];
+      const el = document.elementFromPoint(t.clientX, t.clientY);
+      if(el && el.closest) b = el.closest('.resv-item');
+    }
+    if(!b) return;
+    activateTile(b);
+  }
+
+  // Event delegation (grid) + per-button fallback (local-file robustness)
+  // REMOVE delegation (problematic locally) and attach listeners directly to buttons
+  const items = Array.from(grid.querySelectorAll('.resv-item'));
+  function onActivate(e){
+    const btn = e.currentTarget; // reliable target (not inner spans)
+    grid.querySelectorAll('.resv-item').forEach(x=>x.classList.remove('is-selected'));
+    btn.classList.add('is-selected');
+    applyQty();
+    updatePrice();
+  }
+  items.forEach(btn=>{
+    btn.addEventListener('click', onActivate);
+    btn.addEventListener('touchstart', onActivate, {passive:true});
+  });
+
+  qty.addEventListener('change', updatePrice);
+
+  // Smoke tests (console only)
+  try {
+    console.assert(items.length>0, 'Tiles present');
+    const a=items[0], b=items[1];
+    if(a&&b){
+      activateTile(a);
+      b.dispatchEvent(new Event('click', {bubbles:true}));
+      console.assert(b.classList.contains('is-selected'), 'Click switches selection');
+    }
+  } catch(err){ log('Self-test skipped', err); }
+
+  applyQty(); updatePrice();
+})();
+</script>
+</body>
+</html>

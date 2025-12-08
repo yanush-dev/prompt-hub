@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <title>Monolog Hub</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-ai-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon-ai-16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="ai-icon-180.png">
+  <meta name="apple-mobile-web-app-title" content="Prompter">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <style>
+    :root {
+      --bg: #f5f5f7;
+      --card-bg: #ffffff;
+      --field-bg: #f9fafb;
+      --details-bg: #fafafa;
+      --border: #d4d4d8;
+      --text-main: #111827;
+      --text-muted: #6b7280;
+      --accent: #14b8a6;
+      --accent-soft: rgba(20,184,166,0.10);
+      --radius-card: 20px;
+      --radius-input: 12px;
+      --font-main: -apple-system, system-ui, BlinkMacSystemFont, "SF Pro Text", sans-serif;
+    }
+
+    body[data-theme="dark"] {
+      --bg: #020617;
+      --card-bg: #020617;
+      --field-bg: #020617;
+      --details-bg: #020617;
+      --border: #1f2937;
+      --text-main: #e5e7eb;
+      --text-muted: #9ca3af;
+      --accent: #14b8a6;
+      --accent-soft: rgba(20,184,166,0.30);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: var(--font-main);
+      background: var(--bg);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      overflow-y: scroll;
+    }
+
+    .wrap {
+      width: 100%;
+      max-width: 520px;
+      padding: 14px;
+    }
+
+    .card {
+      position: relative;
+      background: var(--card-bg);
+      border-radius: var(--radius-card);
+      border: 1px solid var(--border);
+      padding: 16px 16px 18px;
+      box-shadow: 0 18px 36px rgba(15,23,42,0.10);
+    }
+
+    body[data-theme="dark"] .card {
+      box-shadow: 0 18px 40px rgba(0,0,0,0.7);
+    }
+
+    .title-row {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin-bottom: 12px;
+    }
+
+    .title {
+      font-size: 1.08rem;
+      font-weight: 650;
+      letter-spacing: 0.03em;
+    }
+
+    .subtitle {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .mic-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 10px;
+      margin-top: 2px;
+      gap: 6px;
+    }
+
+    .mic-btn {
+      width: 72px;
+      height: 72px;
+      border-radius: 999px;
+      border: none;
+      background: var(--accent);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: transform 80ms ease, background 80ms ease;
+    }
+
+    .mic-btn .mic-icon {
+      width: 60%;
+      height: 60%;
+      display: block;
+      fill: #f9fafb;
+      stroke: #f9fafb;
+    }
+
+    .mic-btn:active {
+      transform: scale(0.94);
+      background: #0f9a94;
+    }
+
+    .mic-label {
+      font-size: 0.74rem;
+      color: var(--text-muted);
+      text-align: center;
+    }
+
+    .mic-label strong {
+      color: inherit;
+      font-weight: inherit;
+    }
+
+    label {
+      display: block;
+      margin-top: 4px;
+      margin-bottom: 3px;
+      font-size: 0.64rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-main);
+    }
+
+    .label-accent {
+      color: var(--accent);
+    }
+
+    textarea,
+    input,
+    select {
+      width: 100%;
+      border-radius: var(--radius-input);
+      border: 1px solid var(--border);
+      padding: 7px 9px;
+      font-size: 0.80rem;
+      font-family: var(--font-main);
+      font-weight: 400;
+      background: var(--field-bg);
+      color: var(--text-main);
+      outline: none;
+      -webkit-appearance: none;
+      appearance: none;
+      transition: border-color 120ms ease, box-shadow 120ms ease, background 120ms ease, color 120ms ease;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 80px;
+      line-height: 1.46;
+    }
+
+    textarea::placeholder,
+    input::placeholder {
+      font-size: 0.78rem;
+      font-family: var(--font-main);
+      font-weight: 400;
+      color: #9ca3af;
+    }
+
+    body[data-theme="dark"] textarea::placeholder,
+    body[data-theme="dark"] input::placeholder {
+      color: #6b7280;
+    }
+
+    textarea:focus,
+    input:focus,
+    select:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px var(--accent-soft);
+      background: var(--field-bg);
+    }
+
+    select {
+      padding-right: 26px;
+      background-image:
+        linear-gradient(45deg, transparent 50%, #9ca3af 50%),
+        linear-gradient(135deg, #9ca3af 50%, transparent 50%);
+      background-position:
+        calc(100% - 14px) 50%,
+        calc(100% - 8px) 50%;
+      background-size: 6px 6px, 6px 6px;
+      background-repeat: no-repeat;
+    }
+
+    optgroup { font-style: normal; color: #6b7280; }
+
+    body[data-theme="dark"] optgroup {
+      color: #9ca3af;
+    }
+
+    select {
+      color: #374151;
+    }
+    body[data-theme="dark"] select {
+      color: #111827;
+    }
+    body[data-theme="dark"] select {
+      color: #e5e7eb;
+    }
+    select.placeholder {
+      color: #9ca3af;
+    }
+    select option[disabled][value=""] {
+      color: #9ca3af;
+    }
+
+    .section-label-inline {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-top: 6px;
+      margin-bottom: 3px;
+    }
+
+    .section-label-inline span {
+      font-size: 0.64rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-main);
+    }
+
+    .section-label-inline small {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+    }
+
+    .buttons {
+      margin-top: 12px;
+      margin-bottom: 6px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    button.action {
+      border-radius: var(--radius-input);
+      border: none;
+      padding: 10px 10px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      cursor: pointer;
+      width: 100%;
+    }
+
+    #generate {
+      background: var(--accent);
+      color: #f9fafb;
+    }
+
+    #copy {
+      background: #020617;
+      color: #f9fafb;
+    }
+
+    /* jaśniejszy, konturowy KOPIUJ w dark mode */
+    body[data-theme="dark"] #copy {
+      background: transparent;
+      border: 1px solid var(--accent);
+      color: var(--accent);
+    }
+
+    #output {
+      width: 100%;
+      font-family: var(--font-main);
+      font-size: 0.82rem;
+      min-height: 120px;
+      background: var(--field-bg);
+      border-radius: var(--radius-input);
+      border: 1px solid var(--border);
+      padding: 8px 10px;
+      margin-top: 4px;
+      white-space: pre-wrap;
+      line-height: 1.45;
+      color: var(--text-main);
+    }
+
+    .footer {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      margin-top: 5px;
+      line-height: 1.35;
+    }
+
+    details {
+      margin-top: 10px;
+      border-radius: 14px;
+      border: 1px dashed #e5e7eb;
+      padding: 7px 9px 9px;
+      background: var(--details-bg);
+    }
+
+    body[data-theme="dark"] details {
+      border-color: #374151;
+    }
+
+    summary {
+      list-style: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.64rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .badge-pro {
+      font-size: 0.64rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      background: #e5f6ff;
+      color: #0369a1;
+      border-radius: 999px;
+      padding: 2px 7px;
+      border: 1px solid #bae6fd;
+    }
+
+    .chevron {
+      font-size: 0.8rem;
+    }
+
+    .advanced-body {
+      margin-top: 7px;
+    }
+
+    /* Niewidoczny click-area do zmiany trybu */
+    .theme-hitbox {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      width: 30px;
+      height: 30px;
+      background: transparent;
+      border: none;
+      padding: 0;
+      cursor: pointer;
+      outline: none;
+    }
+
+    .theme-hitbox:focus-visible {
+      outline: 1px dashed var(--accent);
+      outline-offset: 2px;
+    }
+
+    @media (max-width: 480px) {
+      .wrap { padding: 10px; }
+      .card { padding: 14px 13px 16px; }
+      .mic-btn {
+        width: 68px;
+        height: 68px;
+      }
+    }
+  </style>
+</head>
+<body data-theme="light">
+  <div class="wrap">
+    <div class="card">
+      <!-- Niewidoczny przełącznik light/dark -->
+      <button type="button" class="theme-hitbox" aria-label="Przełącz tryb jasny / ciemny"></button>
+
+      <div class="mic-wrapper">
+        <button type="button" class="mic-btn" id="micMain" aria-label="Fokus na monolog">
+          <svg class="mic-icon" viewBox="0 0 24 24" aria-hidden="true">
+            <rect x="9" y="4" width="6" height="10" rx="3"></rect>
+            <path d="M7 11a5 5 0 0 0 10 0" fill="none" stroke-width="1.6" stroke-linecap="round"></path>
+            <path d="M12 16v3.5" fill="none" stroke-width="1.6" stroke-linecap="round"></path>
+            <path d="M9.5 19.5h5" fill="none" stroke-width="1.6" stroke-linecap="round"></path>
+          </svg>
+        </button>
+        <div class="mic-label">
+          Dotknij, żeby zacząć <strong>dyktować</strong> lub pisać.<br>
+          Pola niżej są opcjonalne.
+        </div>
+      </div>
+
+      <textarea id="monolog" rows="5" placeholder="Tu dyktujesz albo wklejasz swój chaos: myśli, problem, kontekst, pytania – wszystko w jednym."></textarea>
+
+      <input type="hidden" id="q_tryb" value="auto">
+
+      <details>
+        <summary>
+          <span class="badge-pro">PRO</span>
+          <span>Opcjonalne doprecyzowanie (kontekst / cel / rola / format)</span>
+          <span class="chevron">▾</span>
+        </summary>
+        <div class="advanced-body">
+          <label for="p_kontekst" class="label-accent">Kontekst</label>
+          <textarea id="p_kontekst" rows="2" placeholder="(opcjonalnie) projekt / sytuacja, 1–3 zdania"></textarea>
+
+          <label for="p_cel" class="label-accent">Cel tej odpowiedzi</label>
+          <textarea id="p_cel" rows="2" placeholder="(opcjonalnie) jaki efekt chcesz z tej jednej odpowiedzi"></textarea>
+
+          <label for="p_rola" class="label-accent">Rola</label>
+          <select id="p_rola">
+            <option value="">Krytyczny partner (domyślna)</option>
+            <optgroup label="Pisanie / treści">
+              <option>Brutalny redaktor</option>
+              <option>Ghostwriter</option>
+              <option>Korektor stylistyczny</option>
+              <option>Redaktor merytoryczny</option>
+              <option>Copywriter sprzedażowy</option>
+              <option>Copywriter landing page</option>
+              <option>Copywriter social media</option>
+              <option>Scenarzysta wideo</option>
+              <option>Scenarzysta podcastu</option>
+              <option>Twórca konspektu książki</option>
+              <option>Twórca konspektu kursu online</option>
+              <option>Projektant struktury artykułu</option>
+              <option>Twórca nagłówków</option>
+              <option>Twórca hooków i leadów</option>
+              <option>Twórca treści newslettera</option>
+              <option>Redaktor UX writing</option>
+            </optgroup>
+            <optgroup label="Biznes / hostel / usługi">
+              <option>Konsultant biznesowy</option>
+              <option>Strateg marketingowy</option>
+              <option>Projektant doświadczenia gościa hostelu</option>
+              <option>Projektant oferty noclegowej</option>
+              <option>Analityk rentowności pokoi</option>
+              <option>Projektant programu lojalnościowego</option>
+              <option>Specjalista od upsellu</option>
+              <option>Specjalista od cross-sellu</option>
+              <option>Twórca opisu oferty</option>
+              <option>Twórca komunikatów dla gości</option>
+              <option>Twórca regulaminu przyjaznego gościom</option>
+              <option>Konsultant obsługi klienta</option>
+              <option>Projektant procesu meldunku</option>
+              <option>Projektant procesu wymeldowania</option>
+              <option>Projektant automatycznych wiadomości</option>
+              <option>Specjalista od opinii i recenzji</option>
+            </optgroup>
+            <optgroup label="Myślenie / strategia">
+              <option>Adwokat diabła</option>
+              <option>Krytyk założeń</option>
+              <option>Facylitator decyzji</option>
+              <option>Projektant scenariuszy</option>
+              <option>Autor analizy ryzyka</option>
+              <option>Twórca wariantów strategii</option>
+              <option>Mentor strategiczny</option>
+              <option>Analizator konsekwencji długoterminowych</option>
+              <option>Twórca mapy problemu</option>
+              <option>Twórca mapy interesariuszy</option>
+              <option>Twórca drzewka decyzyjnego</option>
+              <option>Twórca argumentacji za i przeciw</option>
+              <option>Twórca planu działania</option>
+              <option>Twórca check-list</option>
+              <option>Twórca roadmapy projektu</option>
+            </optgroup>
+            <optgroup label="Psychologia / komunikacja">
+              <option>Psycholog komunikacji</option>
+              <option>Trener komunikacji bez przemocy</option>
+              <option>Projektant komunikatów empatycznych</option>
+              <option>Projektant komunikatów asertywnych</option>
+              <option>Facylitator trudnych rozmów</option>
+              <option>Projektant komunikacji kryzysowej</option>
+              <option>Trener feedbacku</option>
+              <option>Trener rozmów z gośćmi niezadowolonymi</option>
+              <option>Projektant komunikatów BHP</option>
+              <option>Projektant instrukcji wizualnych</option>
+              <option>Trener komunikacji e-mail</option>
+              <option>Trener komunikacji SMS</option>
+              <option>Twórca skryptów rozmów</option>
+              <option>Twórca scenariuszy odpowiedzi</option>
+              <option>Twórca person klientów</option>
+            </optgroup>
+            <optgroup label="Produkt / systemy / procesy">
+              <option>Projektant procesów</option>
+              <option>Optymalizator procesów</option>
+              <option>Architekt systemu rezerwacji</option>
+              <option>Architekt systemu komunikacji</option>
+              <option>Projektant dashboardu</option>
+              <option>Projektant formularzy</option>
+              <option>Projektant checklist operacyjnych</option>
+              <option>Projektant procedur awaryjnych</option>
+              <option>Twórca instrukcji krok po kroku</option>
+              <option>Twórca schematów decyzyjnych</option>
+              <option>Projektant standardów obsługi</option>
+              <option>Projektant szkoleń dla zespołu</option>
+              <option>Twórca materiałów wdrożeniowych</option>
+              <option>Twórca wewnętrznego wiki</option>
+              <option>Twórca systemu tagowania zadań</option>
+            </optgroup>
+            <optgroup label="Inna">
+              <option value="custom">Inna (opiszę poniżej)</option>
+            </optgroup>
+          </select>
+          <label for="p_format" class="label-accent">Format wyniku</label>
+          <select id="p_format">
+            <option value="" disabled selected>Domyślny (auto – interpretacja + lista punktów + decyzje)</option>
+            <option>Lista punktów</option>
+            <option>Gotowy tekst</option>
+            <option>Tabela porównawcza</option>
+            <option>Checklista</option>
+            <option value="custom">Inny (opiszę poniżej)</option>
+          </select>
+
+          <label for="p_instrukcje" class="label-accent">Jak mam pracować</label>
+          <textarea id="p_instrukcje" rows="2" placeholder="Np. najpierw ocena założeń, potem propozycje, a na końcu decyzja."></textarea>
+        </div>
+      </details>
+
+      <div class="buttons">
+        <button id="generate" class="action">Generuj</button>
+        <button id="copy" class="action">Kopiuj</button>
+      </div>
+
+      <textarea id="output" rows="7" readonly></textarea>
+
+      <div class="footer">
+        1) Nagraj / wklej monolog. 2) (Opcjonalnie) rozwiń PRO i dopisz szczegóły. 3) Kliknij „Generuj”, potem „Kopiuj” i wklej całość jako pierwszą wiadomość w rozmowie z modelem.
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const monologEl = document.getElementById("monolog");
+    const outputEl = document.getElementById("output");
+
+    // Główny przycisk – fokus na monolog
+    document.getElementById("micMain").addEventListener("click", () => {
+      monologEl.focus();
+      monologEl.setSelectionRange(monologEl.value.length, monologEl.value.length);
+      monologEl.scrollIntoView({ behavior: "smooth", block: "center" });
+    });
+
+    // Niewidoczny przełącznik light/dark
+    const themeHitbox = document.querySelector(".theme-hitbox");
+    const bodyEl = document.body;
+
+    function setTheme(theme) {
+      bodyEl.setAttribute("data-theme", theme);
+      try {
+        localStorage.setItem("prompter_theme", theme);
+      } catch (e) {}
+    }
+
+    function toggleTheme() {
+      const current = bodyEl.getAttribute("data-theme") || "light";
+      const next = current === "light" ? "dark" : "light";
+      setTheme(next);
+    }
+
+    themeHitbox.addEventListener("click", toggleTheme);
+
+    // Inicjalizacja z localStorage / prefers-color-scheme
+    (function initTheme() {
+      let theme = "light";
+      try {
+        const stored = localStorage.getItem("prompter_theme");
+        if (stored === "light" || stored === "dark") {
+          theme = stored;
+        } else if (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) {
+          theme = "dark";
+        }
+      } catch (e) {}
+      setTheme(theme);
+    })();
+
+    function proIsUsed() {
+      const kontekst = document.getElementById("p_kontekst").value.trim();
+      const cel = document.getElementById("p_cel").value.trim();
+      const rolaSel = document.getElementById("p_rola").value;
+      const formatSel = document.getElementById("p_format").value;
+      const instrukcje = document.getElementById("p_instrukcje").value.trim();
+
+      return (
+        kontekst ||
+        cel ||
+        rolaSel ||
+        formatSel ||
+        instrukcje
+      );
+    }
+
+    function buildQuickPrompt() {
+      const monolog = monologEl.value.trim();
+      const tryb = document.getElementById("q_tryb").value || "auto";
+
+      let instrukcjeTryb = "";
+      if (tryb === "auto") {
+        instrukcjeTryb = `
+TRYB PRACY:
+- Maksymalna inicjatywa po stronie modelu.
+- Twoje kroki:
+  1) Przeczytaj mój monolog.
+  2) Wyciągnij i nazwij: KONTEKST, CEL, sugerowaną ROLĘ, sugerowany FORMAT odpowiedzi.
+  3) Wypunktuj brakujące informacje lub niejasności.
+  4) Zaproponuj konkretny sposób pracy i od razu zrób pierwszy krok (np. pierwszą analizę / propozycję).`;
+      } else if (tryb === "balanced") {
+        instrukcjeTryb = `
+TRYB PRACY:
+- Średnia inicjatywa po stronie modelu.
+- Twoje kroki:
+  1) Przeczytaj mój monolog.
+  2) Wyciągnij i nazwij: KONTEKST i CEL.
+  3) Zaproponuj 2–3 możliwe ROLE i FORMATY odpowiedzi (z krótkim uzasadnieniem).
+  4) Zadaj mi 2–4 pytania doprecyzowujące i wstrzymaj się z większymi wnioskami do mojej odpowiedzi.`;
+      } else {
+        instrukcjeTryb = `
+TRYB PRACY:
+- Minimalna inicjatywa po stronie modelu.
+- Twoje kroki:
+  1) Przeczytaj mój monolog.
+  2) Zrób krótkie streszczenie w 5–8 zdaniach.
+  3) Wypunktuj, co jest jasne, a co niejasne.
+  4) Zadaj mi konkretne pytania doprecyzowujące i poczekaj na odpowiedź przed dalszym działaniem.`;
+      }
+
+      const prompt = `[GPT_WEBPROMPT_QUICK_V1]
+
+INSTRUKCJE DLA MODELU AI:
+- Ta wiadomość pochodzi z mojego „quick prompt buildera” – mówię tu po ludzku, często chaotycznie.
+- Najpierw przeczytaj całość, a potem wykonaj kroki z sekcji TRYB PRACY.
+- Nie zakładaj, że KONTEKST, CEL, ROLA i FORMAT są już dobrze nazwane – to jest część Twojej pracy.
+${instrukcjeTryb}
+
+MÓJ SUROWY MONOLOG:
+${monolog || "(puste – jeśli to widzisz, poproś mnie, żebym opisał sytuację po ludzku, bez struktury)"}        
+`;
+      return prompt;
+    }
+
+    function buildProPrompt() {
+      const monolog = monologEl.value.trim();
+      const tryb = document.getElementById("q_tryb").value || "auto";
+      const kontekst = document.getElementById("p_kontekst").value.trim();
+      const cel = document.getElementById("p_cel").value.trim();
+      const rolaSel = document.getElementById("p_rola").value;
+      const formatSel = document.getElementById("p_format").value;
+      const instrukcje = document.getElementById("p_instrukcje").value.trim();
+
+      let rola;
+      if (!rolaSel) {
+        rola = "(domyślna: krytyczny partner)";
+      } else if (rolaSel === "custom") {
+        rola = "(Inna – sam zaproponuj na podstawie kontekstu i celu, zanim zapytasz mnie o doprecyzowanie)";
+      } else {
+        rola = rolaSel;
+      }
+
+      let format;
+      if (!formatSel) {
+        format = "(domyślny: interpretacja + lista punktów + decyzje)";
+      } else if (formatSel === "custom") {
+        format = "(Inny – sam zaproponuj najlepszy format na podstawie kontekstu i celu, i jasno go nazwij na początku odpowiedzi)";
+      } else {
+        format = formatSel;
+      }
+
+      let trybLinia = "";
+      if (tryb === "auto") {
+        trybLinia = "Tryb prowadzenia: maksymalna inicjatywa po stronie modelu.";
+      } else if (tryb === "balanced") {
+        trybLinia = "Tryb prowadzenia: średnia inicjatywa, najpierw propozycje kierunków, potem pytania.";
+      } else {
+        trybLinia = "Tryb prowadzenia: minimalna inicjatywa, najpierw streszczenie i pytania.";
+      }
+
+      let prompt = `[GPT_WEBPROMPT_V2]
+
+INSTRUKCJE DLA MODELU AI:
+- Ta wiadomość pochodzi z mojego własnego „prompt buildera”.
+- Najpierw przeczytaj KONTEKST, CEL/ZADANIE i MÓJ SUROWY MONOLOG – traktuj je razem jako główne źródło.
+- Jeśli KONTEKST lub CEL/ZADANIE są zbyt ogólne, zacznij od krótkiego podsumowania i wypunktuj, jakich informacji brakuje.
+- Jeśli ROLA jest pusta, przyjmij domyślną: krytyczny partner (brutalny redaktor + konsultant biznesowy + adwokat diabła).
+- Jeśli FORMAT_WYNIKU jest pusty, sam zaproponuj najlepszy format i powiedz, jaki wybrałeś.
+- Domyślny styl odpowiedzi: myślenie krytyczne, bez automatycznego potwierdzania moich założeń.
+- ${trybLinia}
+
+KONTEKST:
+${kontekst || "(wyciągnij kontekst na podstawie monologu poniżej i nazwij go własnymi słowami)"}
+
+CEL / ZADANIE:
+${cel || "(wyciągnij 1–3 możliwe cele na podstawie monologu i zaproponuj, który jest najrozsądniejszy)"} 
+
+ROLA:
+${rola}
+
+FORMAT_WYNIKU:
+${format}
+
+DODATKOWE INSTRUKCJE DLA TEGO ZADANIA:
+${instrukcje || "ocena i propozycje"}  
+
+MÓJ SUROWY MONOLOG:
+${monolog || "(puste – jeśli to widzisz, poproś mnie, żebym opisał sytuację po ludzku, bez struktury)"}        
+`;
+      return prompt;
+    }
+
+    document.getElementById("generate").addEventListener("click", () => {
+      const usePro = proIsUsed();
+      const prompt = usePro ? buildProPrompt() : buildQuickPrompt();
+      outputEl.value = prompt;
+    });
+
+    document.getElementById("copy").addEventListener("click", () => {
+      if (!outputEl.value.trim()) {
+        const usePro = proIsUsed();
+        outputEl.value = usePro ? buildProPrompt() : buildQuickPrompt();
+      }
+      outputEl.focus();
+      outputEl.select();
+      try { document.execCommand("copy"); } catch (e) {}
+    });
+  </script>
+</body>
+</html>

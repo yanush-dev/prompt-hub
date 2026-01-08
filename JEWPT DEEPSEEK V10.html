@@ -1,0 +1,1412 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>JewPT</title>
+    
+    <!-- Favicon i Apple Touch Icon z SVG zakodowanym w Base64 -->
+    <link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiB2aWV3Qm94PSIwIDAgMTAwIDEwMCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgogICAgPGRlZnM+CiAgICAgICAgPGxpbmVhckdyYWRpZW50IGlkPSJCbHVlR3JhZGllbnQiIHgxPSIwJSIgeTE9IjAlIiB4Mj0iMTAwJSIgeTI9IjEwMCUiPgogICAgICAgICAgICA8c3RvcCBvZmZzZXQ9IjAlIiBzdHlsZT0ic3RvcC1jb2xvcjojMzhhNWZmO3N0b3Atb3BhY2l0eToxIiAvPgogICAgICAgICAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0eWxlPSJzdG9wLWNvbG9yOiMwMDdhZmY7c3RvcC1vcGFjaXR5OjEiIC8+CiAgICAgICAgPC9saW5lYXJHcmFkaWVudD4KICAgIDwvZGVmcz4KCiAgICA8cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgcng9IjIyIiBmaWxsPSJ1cmwoI0JsdWVHcmFkaWVudCkiLz4KCiAgICA8ZyBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS13aWR0aD0iNiIgZmlsbD0ibm9uZSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSg1LCA1KSBzY2FsZSgwLjgpIj4KICAgICAgICA8cGF0aCBkPSJNIDIwIDE1IEMgMjAgNSwgNSA1LCA1IDE1IEwgNSA4MCBDIDUgOTAsIDIwIDkwLCAyMCA4MCBMIDIwIDE1IFoiIC8+CiAgICAgICAgPHBhdGggZD0iTSAyMCAxNSBMIDg1IDE1IEMgOTAgMTUsIDkwIDIwLCA4NSAyNSBMIDIwIDI1IiAvPgogICAgICAgIDxwYXRoIGQ9Ik0gMzAgMzggTCA3NSAzOCIgLz4KICAgICAgICA8cGF0aCBkPSJNIDMwIDUxIEwgNzUgNTEiIC8+CiAgICAgICAgPHBhdGggZD0iTSAzMCA2NCBMIDY1IDY0IiAvPgoKICAgICAgICA8cG9seWxpbmUgcG9pbnRzPSI3NSA3OSwgODUgNzEsIDc1IDYzIiAvPgogICAgICAgIDxwb2x5bGluZSBwb2ludHM9IjY1IDc5LCA3NSA3MSwgNjUgNjMiIC8+CiAgICA8L2c+Cjwvc3ZnPg==">
+    
+    <link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiB2aWV3Qm94PSIwIDAgMTAwIDEwMCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgogICAgPGRlZnM+CiAgICAgICAgPGxpbmVhckdyYWRpZW50IGlkPSJCbHVlR3JhZGllbnQiIHgxPSIwJSIgeTE9IjAlIiB4Mj0iMTAwJSIgeTI9IjEwMCUiPgogICAgICAgICAgICA8c3RvcCBvZmZzZXQ9IjAlIiBzdHlsZT0ic3RvcC1jb2xvcjojMzhhNWZmO3N0b3Atb3BhY2l0eToxIiAvPgogICAgICAgICAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0eWxlPSJzdG9wLWNvbG9yOiMwMDdhZmY7c3RvcC1vcGFjaXR5OjEiIC8+CiAgICAgICAgPC9saW5lYXJHcmFkaWVudD4KICAgIDwvZGVmcz4KCiAgICA8cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgcng9IjIyIiBmaWxsPSJ1cmwoI0JsdWVHcmFkaWVudCkiLz4KCiAgICA8ZyBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS13aWR0aD0iNiIgZmlsbD0ibm9uZSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSg1LCA1KSBsc2NhbGUoMC44KSI+CiAgICAgICAgPHBhdGggZD0iTSAyMCAxNSBDIDIwIDUsIDUgNSwgNSAxNSBMIDUgODAgQyA1IDkwLCAyMCA5MCwgMjAgODAgTCAyMCAxNSBaIiAvPgogICAgICAgIDxwYXRoIGQ9Ik0gMjAgMTUgTCA4NSAxNSBDIDkwIDE1LCA5MCAyMCwgODUgMjUgTCAyMCAyNSIgLz4KICAgICAgICA8cGF0aCBkPSJNIDMwIDM4IEwgNzUgMzgiIC8+CiAgICAgICAgPHBhdGggZD0iTSAzMCA1MSBMIDc1IDUxIiAvPgogICAgICAgIDxwYXRoIGQ9Ik0gMzAgNjQgTCA2NSA2NCIgLz4KCiAgICAgICAgPHBvbHlsaW5lIHBvaW50cz0iNzUgNzksIDg1IDcxLCA3NSA2MyIgLz4KICAgICAgICA8cG9seWxpbmUgcG9pbnRzPSI2NSA3OSwgNzUgNzEsIDY1IDYzIiAvPgogICAgPC9nPgo8L3N2Zz4=">
+    
+    <!-- Apple PWA Meta Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="JewPT">
+    
+    <!-- Theme Color -->
+    <meta name="theme-color" content="#007aff" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+    
+    <!-- Boxicons CDN -->
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+    
+    <style>
+        /* VARIABLES */
+        :root {
+            --bg: #f2f2f7;
+            --surface: #ffffff;
+            --surface-secondary: #f2f2f7;
+            --border: #c7c7cc;
+            --border-light: #e5e5ea;
+            
+            --text: #000000;
+            --text-secondary: #8e8e93;
+            --text-tertiary: #aeaeb2;
+            
+            --blue: #007aff;
+            --blue-light: rgba(0, 122, 255, 0.1);
+            --red: #ff3b30;
+            --green: #34c759;
+            
+            --radius: 14px;
+            --radius-sm: 10px;
+            
+            --shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            
+            --font: -apple-system, system-ui, BlinkMacSystemFont, sans-serif;
+            
+            --safe-top: env(safe-area-inset-top, 0px);
+            --safe-bottom: env(safe-area-inset-bottom, 0px);
+        }
+
+        .dark-mode {
+            --bg: #000000;
+            --surface: #1c1c1e;
+            --surface-secondary: #2c2c2e;
+            --border: #38383a;
+            --border-light: #444446;
+            
+            --text: #ffffff;
+            --text-secondary: #98989d;
+            --text-tertiary: #6c6c70;
+            
+            --blue: #0a84ff;
+            --blue-light: rgba(10, 132, 255, 0.2);
+        }
+
+        /* RESET */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: var(--font);
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.4;
+            font-size: 17px;
+            padding: 0;
+            margin: 0;
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* LAYOUT */
+        .app {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: calc(20px + var(--safe-top)) 20px calc(80px + var(--safe-bottom));
+            min-height: 100vh;
+        }
+
+        /* HEADER */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-top: 4px;
+        }
+
+        .header-title {
+            font-size: 32px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .jew {
+            color: var(--blue);
+        }
+
+        .pt {
+            color: var(--text);
+        }
+
+        .theme-toggle {
+            width: 44px;
+            height: 28px;
+            background: var(--surface-secondary);
+            border-radius: 14px;
+            border: 1px solid var(--border);
+            position: relative;
+            cursor: pointer;
+            padding: 2px;
+        }
+
+        .theme-toggle::after {
+            content: '';
+            position: absolute;
+            width: 24px;
+            height: 24px;
+            background: var(--surface);
+            border-radius: 12px;
+            top: 1px;
+            left: 2px;
+            transition: transform 0.2s ease;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .dark-mode .theme-toggle::after {
+            transform: translateX(16px);
+        }
+
+        /* MAIN INPUT */
+        .main-input {
+            width: 100%;
+            min-height: 160px;
+            background: var(--surface);
+            border: 2px solid var(--border-light);
+            border-radius: var(--radius);
+            padding: 16px;
+            font-family: var(--font);
+            font-size: 17px;
+            color: var(--text);
+            resize: none;
+            margin-bottom: 16px;
+            line-height: 1.5;
+        }
+
+        .main-input:focus {
+            outline: none;
+            border-color: var(--blue);
+        }
+
+        .main-input::placeholder {
+            color: var(--text-tertiary);
+        }
+
+        /* STATS */
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            font-size: 14px;
+            color: var(--text-secondary);
+            padding: 0 4px;
+        }
+
+        .stat {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .stat-number {
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        /* MODE SELECTOR */
+        .mode-selector {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            background: var(--surface-secondary);
+            border-radius: var(--radius-sm);
+            padding: 4px;
+            border: 1px solid var(--border);
+            margin-bottom: 12px;
+        }
+
+        .mode {
+            padding: 12px;
+            text-align: center;
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            border-radius: calc(var(--radius-sm) - 2px);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .mode.active {
+            background: var(--surface);
+            color: var(--blue);
+            font-weight: 600;
+            box-shadow: var(--shadow);
+        }
+
+        .mode-info {
+            font-size: 13px;
+            color: var(--text-secondary);
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 0 8px;
+            line-height: 1.4;
+        }
+
+        .mode-info strong {
+            color: var(--blue);
+        }
+
+        /* ROLE SELECTOR */
+        .role-selector {
+            background: var(--surface);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border-light);
+        }
+
+        .role-label {
+            display: block;
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+        }
+
+        .role-select {
+            width: 100%;
+            padding: 14px;
+            background: var(--surface);
+            border: 2px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-family: var(--font);
+            font-size: 16px;
+            color: var(--text);
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%238e8e93' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 14px center;
+            background-size: 16px;
+        }
+
+        .role-select:focus {
+            outline: none;
+            border-color: var(--blue);
+        }
+
+        .role-select option:disabled {
+            font-weight: 600;
+            color: var(--blue);
+            background: var(--blue-light);
+            font-style: italic;
+        }
+
+        /* ACTIONS */
+        .actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .btn {
+            padding: 16px;
+            border-radius: var(--radius-sm);
+            border: none;
+            font-family: var(--font);
+            font-size: 17px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: var(--blue);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            opacity: 0.9;
+        }
+
+        .btn-primary:active {
+            transform: scale(0.98);
+        }
+
+        .btn-secondary {
+            background: var(--surface);
+            color: var(--blue);
+            border: 2px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--surface-secondary);
+        }
+
+        /* OUTPUT */
+        .output-container {
+            background: var(--surface);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border-light);
+            box-shadow: var(--shadow);
+        }
+
+        .output-label {
+            display: block;
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+        }
+
+        .output {
+            width: 100%;
+            min-height: 140px;
+            background: var(--surface-secondary);
+            border-radius: var(--radius-sm);
+            padding: 16px;
+            font-family: monospace;
+            font-size: 15px;
+            color: var(--text);
+            border: 1px solid var(--border);
+            resize: none;
+            line-height: 1.5;
+        }
+
+        /* DOCK */
+        .dock {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--surface);
+            border-top: 1px solid var(--border);
+            padding: 12px 20px calc(12px + var(--safe-bottom));
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            z-index: 100;
+        }
+
+        .dock-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 8px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            border-radius: var(--radius-sm);
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .dock-item.active {
+            color: var(--blue);
+            background: var(--blue-light);
+        }
+
+        .dock-icon {
+            font-size: 22px;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 24px;
+        }
+
+        .dock-label {
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        /* MODALS */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background: var(--surface);
+            border-radius: var(--radius);
+            max-width: 500px;
+            width: 100%;
+            max-height: 80vh;
+            overflow-y: auto;
+            animation: modal-appear 0.3s ease;
+        }
+
+        @keyframes modal-appear {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .modal-header {
+            padding: 20px 20px 0;
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        .modal-body {
+            padding: 0 20px 20px;
+        }
+
+        /* TEMPLATES */
+        .templates-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .template-item {
+            padding: 16px;
+            border-bottom: 1px solid var(--border-light);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .template-item:last-child {
+            border-bottom: none;
+        }
+
+        .template-item:hover {
+            background: var(--surface-secondary);
+        }
+
+        .template-name {
+            font-weight: 500;
+        }
+
+        .template-date {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* HISTORY */
+        .history-item {
+            padding: 16px;
+            border-bottom: 1px solid var(--border-light);
+            cursor: pointer;
+        }
+
+        .history-item:last-child {
+            border-bottom: none;
+        }
+
+        .history-item:hover {
+            background: var(--surface-secondary);
+        }
+
+        .history-preview {
+            font-size: 15px;
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .history-time {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* ALERT */
+        .alert {
+            position: fixed;
+            bottom: calc(20px + var(--safe-bottom));
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--surface);
+            padding: 12px 20px;
+            border-radius: var(--radius-sm);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            font-size: 15px;
+            z-index: 1000;
+            animation: alert-appear 0.3s ease;
+            border: 1px solid var(--border);
+        }
+
+        @keyframes alert-appear {
+            from {
+                opacity: 0;
+                transform: translateX(-50%) translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
+        }
+
+        /* EMPTY STATE */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-tertiary);
+        }
+
+        /* UTILITY */
+        .hidden {
+            display: none !important;
+        }
+
+        .text-center { text-align: center; }
+        .mt-2 { margin-top: 8px; }
+        .mt-4 { margin-top: 16px; }
+        .mb-2 { margin-bottom: 8px; }
+        .mb-4 { margin-bottom: 16px; }
+        .w-full { width: 100%; }
+
+        /* SCROLLBAR */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--surface-secondary);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <div class="app">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-title">
+                <span class="jew">Jew</span><span class="pt">PT</span>
+            </div>
+            <div class="theme-toggle" id="themeToggle"></div>
+        </div>
+
+        <!-- Main Input -->
+        <textarea 
+            class="main-input" 
+            id="monologInput" 
+            placeholder="Wpisz swój monolog tutaj..."></textarea>
+
+        <!-- Stats -->
+        <div class="stats">
+            <div class="stat">
+                <span class="stat-number" id="wordCount">0</span>
+                <span>słów</span>
+            </div>
+            <div class="stat">
+                <span class="stat-number" id="charCount">0</span>
+                <span>znaków</span>
+            </div>
+        </div>
+
+        <!-- Mode Selector with Explanation -->
+        <div class="mode-selector">
+            <div class="mode active" data-mode="auto">Auto</div>
+            <div class="mode" data-mode="balanced">Balans</div>
+            <div class="mode" data-mode="minimal">Minimal</div>
+        </div>
+
+        <div class="mode-info" id="modeInfo">
+            <strong>Auto:</strong> AI działa z inicjatywą – analizuje, proponuje strukturę i od razu wykonuje pierwszy krok. Idealne, gdy potrzebujesz szybkiej, kompleksowej odpowiedzi.
+        </div>
+
+        <!-- Role Selector -->
+        <div class="role-selector">
+            <label class="role-label">Rola AI</label>
+            <select class="role-select" id="roleSelect">
+                <!-- Options will be populated by JavaScript -->
+            </select>
+        </div>
+
+        <!-- Actions -->
+        <div class="actions">
+            <button class="btn btn-primary" id="generateBtn">
+                <i class='bx bx-chat'></i>
+                Generuj
+            </button>
+            <button class="btn btn-secondary" id="copyBtn">
+                <i class='bx bx-copy'></i>
+                Kopiuj
+            </button>
+        </div>
+
+        <!-- Output -->
+        <div class="output-container">
+            <label class="output-label">Wygenerowany prompt:</label>
+            <textarea class="output" id="outputPrompt" readonly></textarea>
+        </div>
+    </div>
+
+    <!-- Dock with Boxicons -->
+    <div class="dock">
+        <div class="dock-item active" data-tab="main">
+            <div class="dock-icon"><i class='bx bx-edit'></i></div>
+            <div class="dock-label">Główna</div>
+        </div>
+        <div class="dock-item" data-tab="templates">
+            <div class="dock-icon"><i class='bx bx-folder'></i></div>
+            <div class="dock-label">Szablony</div>
+        </div>
+        <div class="dock-item" data-tab="history">
+            <div class="dock-icon"><i class='bx bx-history'></i></div>
+            <div class="dock-label">Historia</div>
+        </div>
+        <div class="dock-item" data-tab="settings">
+            <div class="dock-icon"><i class='bx bx-cog'></i></div>
+            <div class="dock-label">Ustawienia</div>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    
+    <!-- Templates Modal -->
+    <div class="modal" id="templatesModal">
+        <div class="modal-content">
+            <div class="modal-header">Szablony</div>
+            <div class="modal-body">
+                <input type="text" 
+                       class="main-input" 
+                       style="margin-bottom: 16px; min-height: auto; padding: 12px;"
+                       id="templateNameInput" 
+                       placeholder="Nazwa szablonu">
+                <button class="btn btn-primary w-full mb-4" id="saveTemplateBtn">
+                    <i class='bx bx-save'></i>
+                    Zapisz obecny
+                </button>
+                <div class="templates-list" id="templatesList"></div>
+                <button class="btn btn-secondary w-full mt-4" id="closeTemplatesBtn">Zamknij</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- History Modal -->
+    <div class="modal" id="historyModal">
+        <div class="modal-content">
+            <div class="modal-header">Historia</div>
+            <div class="modal-body">
+                <div class="history-list" id="historyList"></div>
+                <button class="btn btn-secondary w-full mt-4" id="closeHistoryBtn">Zamknij</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div class="modal" id="settingsModal">
+        <div class="modal-content">
+            <div class="modal-header">Ustawienia</div>
+            <div class="modal-body">
+                <div style="margin-bottom: 20px;">
+                    <div style="font-weight: 600; margin-bottom: 8px;">Automatyczne zapisywanie</div>
+                    <div style="color: var(--text-secondary); font-size: 15px; margin-bottom: 12px;">
+                        Zapisuj monolog automatycznie
+                    </div>
+                    <label class="theme-toggle" id="autoSaveToggle" style="display: inline-block;"></label>
+                </div>
+                <button class="btn btn-secondary w-full mb-2" id="exportBtn">Eksportuj wszystko</button>
+                <button class="btn btn-secondary w-full" id="closeSettingsBtn">Zamknij</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // APP STATE - Zaktualizowany system ról
+        const state = {
+            monolog: '',
+            selectedRole: '',
+            selectedMode: 'auto',
+            templates: [],
+            history: [],
+            settings: {
+                autoSave: true,
+                darkMode: window.matchMedia('(prefers-color-scheme: dark)').matches
+            },
+            
+            // NOWY SYSTEM RÓL - 79 ról w 6 grupach
+            defaultRole: "Krytyczny partner (domyślna)",
+            
+            roleGroups: [
+                {
+                    label: "Pisanie / treści",
+                    roles: [
+                        "Brutalny redaktor",
+                        "Ghostwriter",
+                        "Korektor stylistyczny",
+                        "Redaktor merytoryczny",
+                        "Copywriter sprzedażowy",
+                        "Copywriter landing page",
+                        "Copywriter social media",
+                        "Scenarzysta wideo",
+                        "Scenarzysta podcastu",
+                        "Twórca konspektu książki",
+                        "Twórca konspektu kursu online",
+                        "Projektant struktury artykułu",
+                        "Twórca nagłówków",
+                        "Twórca hooków i leadów",
+                        "Twórca treści newslettera",
+                        "Redaktor UX writing"
+                    ]
+                },
+                {
+                    label: "Biznes / hostel / usługi",
+                    roles: [
+                        "Konsultant biznesowy",
+                        "Strateg marketingowy",
+                        "Projektant doświadczenia gościa hostelu",
+                        "Projektant oferty noclegowej",
+                        "Analityk rentowności pokoi",
+                        "Projektant programu lojalnościowego",
+                        "Specjalista od upsellu",
+                        "Specjalista od cross-sellu",
+                        "Twórca opisu oferty",
+                        "Twórca komunikatów dla gości",
+                        "Twórca regulaminu przyjaznego gościom",
+                        "Konsultant obsługi klienta",
+                        "Projektant procesu meldunku",
+                        "Projektant procesu wymeldowania",
+                        "Projektant automatycznych wiadomości",
+                        "Specjalista od opinii i recenzji"
+                    ]
+                },
+                {
+                    label: "Myślenie / strategia",
+                    roles: [
+                        "Adwokat diabła",
+                        "Krytyk założeń",
+                        "Facylitator decyzji",
+                        "Projektant scenariuszy",
+                        "Autor analizy ryzyka",
+                        "Twórca wariantów strategii",
+                        "Mentor strategiczny",
+                        "Analizator konsekwencji długoterminowych",
+                        "Twórca mapy problemu",
+                        "Twórca mapy interesariuszy",
+                        "Twórca drzewka decyzyjnego",
+                        "Twórca argumentacji za i przeciw",
+                        "Twórca planu działania",
+                        "Twórca check-list",
+                        "Twórca roadmapy projektu"
+                    ]
+                },
+                {
+                    label: "Psychologia / komunikacja",
+                    roles: [
+                        "Psycholog komunikacji",
+                        "Trener komunikacji bez przemocy",
+                        "Projektant komunikatów empatycznych",
+                        "Projektant komunikatów asertywnych",
+                        "Facylitator trudnych rozmów",
+                        "Projektant komunikacji kryzysowej",
+                        "Trener feedbacku",
+                        "Trener rozmów z gośćmi niezadowolonymi",
+                        "Projektant komunikatów BHP",
+                        "Projektant instrukcji wizualnych",
+                        "Trener komunikacji e-mail",
+                        "Trener komunikacji SMS",
+                        "Twórca skryptów rozmów",
+                        "Twórca scenariuszy odpowiedzi",
+                        "Twórca person klientów"
+                    ]
+                },
+                {
+                    label: "Produkt / systemy / procesy",
+                    roles: [
+                        "Projektant procesów",
+                        "Optymalizator procesów",
+                        "Architekt systemu rezerwacji",
+                        "Architekt systemu komunikacji",
+                        "Projektant dashboardu",
+                        "Projektant formularzy",
+                        "Projektant checklist operacyjnych",
+                        "Projektant procedur awaryjnych",
+                        "Twórca instrukcji krok po kroku",
+                        "Twórca schematów decyzyjnych",
+                        "Projektant standardów obsługi",
+                        "Projektant szkoleń dla zespołu",
+                        "Twórca materiałów wdrożeniowych",
+                        "Twórca wewnętrznego wiki",
+                        "Twórca systemu tagowania zadań"
+                    ]
+                },
+                {
+                    label: "Inna",
+                    roles: [
+                        "Inna (opiszę poniżej)"
+                    ]
+                }
+            ]
+        };
+
+        // Tryby AI z wyjaśnieniami
+        const modeExplanations = {
+            auto: "<strong>Auto:</strong> AI działa z inicjatywą – analizuje, proponuje strukturę i od razu wykonuje pierwszy krok. Idealne, gdy potrzebujesz szybkiej, kompleksowej odpowiedzi.",
+            balanced: "<strong>Balans:</strong> AI proponuje kierunki – analizuje, sugeruje kilka ścieżek, zadaje pytania doprecyzujące. Idealne, gdy szukasz opcji do wyboru i wolisz współpracować z AI.",
+            minimal: "<strong>Minimal:</strong> AI tworzy streszczenie i pyta – wypunktowuje jasne/niejasne elementy, zadaje konkretne pytania. Idealne, gdy potrzebujesz klaryfikacji lub chcesz prowadzić dialog krok po kroku."
+        };
+
+        // DOM ELEMENTS
+        const monologInput = document.getElementById('monologInput');
+        const outputPrompt = document.getElementById('outputPrompt');
+        const generateBtn = document.getElementById('generateBtn');
+        const copyBtn = document.getElementById('copyBtn');
+        const themeToggle = document.getElementById('themeToggle');
+        const roleSelect = document.getElementById('roleSelect');
+        const wordCount = document.getElementById('wordCount');
+        const charCount = document.getElementById('charCount');
+        const modeInfo = document.getElementById('modeInfo');
+        
+        // Modals
+        const templatesModal = document.getElementById('templatesModal');
+        const historyModal = document.getElementById('historyModal');
+        const settingsModal = document.getElementById('settingsModal');
+        
+        // Modal buttons
+        const saveTemplateBtn = document.getElementById('saveTemplateBtn');
+        const closeTemplatesBtn = document.getElementById('closeTemplatesBtn');
+        const closeHistoryBtn = document.getElementById('closeHistoryBtn');
+        const closeSettingsBtn = document.getElementById('closeSettingsBtn');
+        const exportBtn = document.getElementById('exportBtn');
+        const autoSaveToggle = document.getElementById('autoSaveToggle');
+        const templateNameInput = document.getElementById('templateNameInput');
+
+        // DOCK ELEMENTS
+        const dockItems = document.querySelectorAll('.dock-item');
+
+        // INITIALIZATION
+        function init() {
+            loadFromStorage();
+            setupEventListeners();
+            populateRoles();
+            updateUI();
+            updateStats();
+            applyTheme();
+            updateModeExplanation();
+        }
+
+        // EVENT LISTENERS
+        function setupEventListeners() {
+            // Main input
+            monologInput.addEventListener('input', (e) => {
+                state.monolog = e.target.value;
+                updateStats();
+                if (state.settings.autoSave) {
+                    saveToStorage();
+                }
+            });
+
+            // Generate button
+            generateBtn.addEventListener('click', generatePrompt);
+
+            // Copy button
+            copyBtn.addEventListener('click', copyToClipboard);
+
+            // Theme toggle
+            themeToggle.addEventListener('click', toggleTheme);
+
+            // Mode selector
+            document.querySelectorAll('.mode').forEach(mode => {
+                mode.addEventListener('click', (e) => {
+                    document.querySelectorAll('.mode').forEach(m => m.classList.remove('active'));
+                    e.target.classList.add('active');
+                    state.selectedMode = e.target.dataset.mode;
+                    saveToStorage();
+                    updateModeExplanation();
+                });
+            });
+
+            // Role selector
+            roleSelect.addEventListener('change', (e) => {
+                state.selectedRole = e.target.value;
+                saveToStorage();
+            });
+
+            // Dock navigation
+            dockItems.forEach(item => {
+                item.addEventListener('click', (e) => {
+                    const tab = e.target.closest('.dock-item').dataset.tab;
+                    navigateToTab(tab);
+                });
+            });
+
+            // Template modal
+            saveTemplateBtn.addEventListener('click', saveTemplate);
+            closeTemplatesBtn.addEventListener('click', () => closeModal('templates'));
+
+            // History modal
+            closeHistoryBtn.addEventListener('click', () => closeModal('history'));
+
+            // Settings modal
+            closeSettingsBtn.addEventListener('click', () => closeModal('settings'));
+            exportBtn.addEventListener('click', exportData);
+            autoSaveToggle.addEventListener('click', () => {
+                state.settings.autoSave = !state.settings.autoSave;
+                saveToStorage();
+                updateAutoSaveToggle();
+                showAlert('Zapis auto: ' + (state.settings.autoSave ? 'ON' : 'OFF'));
+            });
+
+            // Close modals on background click
+            [templatesModal, historyModal, settingsModal].forEach(modal => {
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) {
+                        modal.style.display = 'none';
+                        navigateToTab('main');
+                    }
+                });
+            });
+        }
+
+        // CORE FUNCTIONS
+        function generatePrompt() {
+            if (!state.monolog.trim()) {
+                showAlert('Wpisz najpierw monolog!');
+                monologInput.focus();
+                return;
+            }
+
+            const prompt = buildPrompt();
+            outputPrompt.value = prompt;
+
+            // Add to history
+            addToHistory();
+            
+            showAlert('Prompt wygenerowany!');
+        }
+
+        function buildPrompt() {
+            const modeInstructions = {
+                auto: 'DZIAŁAJ Z INICJATYWĄ. Przeanalizuj monolog, wyciągnij kontekst i cel, zaproponuj strukturę odpowiedzi i od razu wykonuj pierwszy krok.',
+                balanced: 'ZAPROPONUJ KIERUNKI. Przeanalizuj monolog, zaproponuj kilka możliwych ścieżek odpowiedzi, zadaj pytania doprecyzujące, a następnie przejdź do analizy.',
+                minimal: 'STRESZCZENIE I PYTANIA. Stwórz streszczenie monologu, wypunktuj co jest jasne/niejasne, zadaj konkretne pytania i czekaj na odpowiedź.'
+            };
+
+            const roleText = state.selectedRole ? 
+                `ROLA: ${state.selectedRole}\n` : 
+                `ROLA: ${state.defaultRole}\n`;
+
+            return `[JEWPT]
+────────────────
+TRYB: ${state.selectedMode.toUpperCase()}
+
+${modeInstructions[state.selectedMode]}
+
+${roleText}
+────────────────
+MONOLOG:
+${state.monolog}
+────────────────
+ODPOWIEDŹ:`;
+        }
+
+        function copyToClipboard() {
+            if (!outputPrompt.value.trim()) {
+                showAlert('Najpierw wygeneruj prompt!');
+                return;
+            }
+
+            outputPrompt.select();
+            outputPrompt.setSelectionRange(0, 99999);
+            
+            try {
+                navigator.clipboard.writeText(outputPrompt.value);
+                showAlert('Skopiowano do schowka!');
+            } catch (err) {
+                document.execCommand('copy');
+                showAlert('Skopiowano (metoda zapasowa)!');
+            }
+        }
+
+        function toggleTheme() {
+            state.settings.darkMode = !state.settings.darkMode;
+            saveToStorage();
+            applyTheme();
+        }
+
+        function applyTheme() {
+            if (state.settings.darkMode) {
+                document.body.classList.add('dark-mode');
+            } else {
+                document.body.classList.remove('dark-mode');
+            }
+        }
+
+        function updateModeExplanation() {
+            modeInfo.innerHTML = modeExplanations[state.selectedMode];
+        }
+
+        function updateAutoSaveToggle() {
+            if (state.settings.autoSave) {
+                autoSaveToggle.classList.add('dark-mode');
+            } else {
+                autoSaveToggle.classList.remove('dark-mode');
+            }
+        }
+
+        // NAVIGATION
+        function navigateToTab(tab) {
+            // Update dock
+            dockItems.forEach(item => {
+                if (item.dataset.tab === tab) {
+                    item.classList.add('active');
+                } else {
+                    item.classList.remove('active');
+                }
+            });
+
+            // Handle tab content
+            switch(tab) {
+                case 'main':
+                    closeAllModals();
+                    break;
+                case 'templates':
+                    openModal('templates');
+                    renderTemplates();
+                    break;
+                case 'history':
+                    openModal('history');
+                    renderHistory();
+                    break;
+                case 'settings':
+                    openModal('settings');
+                    updateAutoSaveToggle();
+                    break;
+            }
+        }
+
+        function openModal(modalName) {
+            closeAllModals();
+            switch(modalName) {
+                case 'templates':
+                    templatesModal.style.display = 'flex';
+                    break;
+                case 'history':
+                    historyModal.style.display = 'flex';
+                    break;
+                case 'settings':
+                    settingsModal.style.display = 'flex';
+                    break;
+            }
+        }
+
+        function closeModal(modalName) {
+            switch(modalName) {
+                case 'templates':
+                    templatesModal.style.display = 'none';
+                    break;
+                case 'history':
+                    historyModal.style.display = 'none';
+                    break;
+                case 'settings':
+                    settingsModal.style.display = 'none';
+                    break;
+            }
+            navigateToTab('main');
+        }
+
+        function closeAllModals() {
+            templatesModal.style.display = 'none';
+            historyModal.style.display = 'none';
+            settingsModal.style.display = 'none';
+        }
+
+        // ROLES
+        function populateRoles() {
+            roleSelect.innerHTML = '';
+            
+            // Add default role
+            const defaultOption = document.createElement('option');
+            defaultOption.value = state.defaultRole;
+            defaultOption.textContent = state.defaultRole;
+            roleSelect.appendChild(defaultOption);
+            
+            // Add grouped options
+            state.roleGroups.forEach(group => {
+                // Add group separator
+                const groupOption = document.createElement('option');
+                groupOption.disabled = true;
+                groupOption.textContent = `── ${group.label} ──`;
+                roleSelect.appendChild(groupOption);
+                
+                // Add roles in this group
+                group.roles.forEach(role => {
+                    const option = document.createElement('option');
+                    option.value = role;
+                    option.textContent = role;
+                    roleSelect.appendChild(option);
+                });
+            });
+            
+            // Set selected value if exists in storage
+            if (state.selectedRole) {
+                roleSelect.value = state.selectedRole;
+            }
+        }
+
+        // TEMPLATES
+        function saveTemplate() {
+            const name = templateNameInput.value.trim();
+            if (!name) {
+                showAlert('Podaj nazwę szablonu!');
+                return;
+            }
+
+            const template = {
+                name,
+                monolog: state.monolog,
+                role: state.selectedRole,
+                mode: state.selectedMode,
+                timestamp: new Date().toLocaleString('pl-PL')
+            };
+
+            state.templates.push(template);
+            saveToStorage();
+            renderTemplates();
+            templateNameInput.value = '';
+            showAlert('Szablon zapisany!');
+        }
+
+        function loadTemplate(index) {
+            const template = state.templates[index];
+            state.monolog = template.monolog;
+            state.selectedRole = template.role;
+            state.selectedMode = template.mode;
+            
+            monologInput.value = state.monolog;
+            roleSelect.value = state.selectedRole;
+            document.querySelectorAll('.mode').forEach(m => {
+                m.classList.toggle('active', m.dataset.mode === state.selectedMode);
+            });
+            
+            saveToStorage();
+            updateUI();
+            updateStats();
+            updateModeExplanation();
+            closeModal('templates');
+            showAlert(`Załadowano: ${template.name}`);
+        }
+
+        function deleteTemplate(index) {
+            if (confirm('Usunąć ten szablon?')) {
+                state.templates.splice(index, 1);
+                saveToStorage();
+                renderTemplates();
+                showAlert('Szablon usunięty');
+            }
+        }
+
+        // HISTORY
+        function addToHistory() {
+            const historyItem = {
+                monolog: state.monolog,
+                prompt: outputPrompt.value,
+                timestamp: new Date().toLocaleTimeString('pl-PL', { 
+                    hour: '2-digit', 
+                    minute: '2-digit' 
+                })
+            };
+
+            state.history.unshift(historyItem);
+            if (state.history.length > 20) {
+                state.history = state.history.slice(0, 20);
+            }
+            saveToStorage();
+        }
+
+        function loadFromHistory(index, type) {
+            const item = state.history[index];
+            if (type === 'monolog') {
+                state.monolog = item.monolog;
+                monologInput.value = state.monolog;
+                updateStats();
+                closeModal('history');
+                showAlert('Wczytano monolog');
+            } else if (type === 'prompt') {
+                outputPrompt.value = item.prompt;
+                closeModal('history');
+                showAlert('Wczytano prompt');
+            }
+        }
+
+        function clearHistory() {
+            if (confirm('Wyczyścić całą historię?')) {
+                state.history = [];
+                saveToStorage();
+                renderHistory();
+                showAlert('Historia wyczyszczona');
+            }
+        }
+
+        // EXPORT
+        function exportData() {
+            const data = {
+                version: 'jewpt-v5',
+                exportDate: new Date().toISOString(),
+                monolog: state.monolog,
+                selectedRole: state.selectedRole,
+                selectedMode: state.selectedMode,
+                templates: state.templates,
+                history: state.history,
+                settings: state.settings,
+                roleGroups: state.roleGroups
+            };
+
+            const dataStr = JSON.stringify(data, null, 2);
+            const dataBlob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(dataBlob);
+            
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `jewpt-export-${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+            
+            showAlert('Dane wyeksportowane!');
+        }
+
+        // RENDERING
+        function renderTemplates() {
+            const container = document.getElementById('templatesList');
+            
+            if (state.templates.length === 0) {
+                container.innerHTML = '<div class="empty-state">Brak zapisanych szablonów</div>';
+                return;
+            }
+
+            container.innerHTML = state.templates.map((template, index) => `
+                <div class="template-item">
+                    <div>
+                        <div class="template-name">${template.name}</div>
+                        <div class="template-date">${template.timestamp}</div>
+                    </div>
+                    <div style="display: flex; gap: 8px;">
+                        <button onclick="loadTemplate(${index})" 
+                                style="background: var(--blue); color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer;">
+                            <i class='bx bx-upload'></i> Załaduj
+                        </button>
+                        <button onclick="deleteTemplate(${index})" 
+                                style="background: var(--red); color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer;">
+                            <i class='bx bx-trash'></i> Usuń
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderHistory() {
+            const container = document.getElementById('historyList');
+            
+            if (state.history.length === 0) {
+                container.innerHTML = '<div class="empty-state">Brak historii</div>';
+                return;
+            }
+
+            container.innerHTML = `
+                <div style="margin-bottom: 16px;">
+                    <button onclick="clearHistory()" 
+                            style="background: var(--red); color: white; border: none; padding: 10px 16px; border-radius: 8px; cursor: pointer; width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                        <i class='bx bx-trash'></i> Wyczyść całą historię
+                    </button>
+                </div>
+                ${state.history.map((item, index) => `
+                    <div class="history-item">
+                        <div class="history-preview">${item.monolog.substring(0, 80)}${item.monolog.length > 80 ? '...' : ''}</div>
+                        <div class="history-time">${item.timestamp}</div>
+                        <div style="display: flex; gap: 8px; margin-top: 8px;">
+                            <button onclick="loadFromHistory(${index}, 'monolog')" 
+                                    style="background: var(--blue); color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; flex: 1; display: flex; align-items: center; justify-content: center; gap: 4px;">
+                                <i class='bx bx-message-square-edit'></i> Monolog
+                            </button>
+                            <button onclick="loadFromHistory(${index}, 'prompt')" 
+                                    style="background: var(--green); color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; flex: 1; display: flex; align-items: center; justify-content: center; gap: 4px;">
+                                <i class='bx bx-code-block'></i> Prompt
+                            </button>
+                        </div>
+                    </div>
+                `).join('')}`;
+        }
+
+        // UTILITY FUNCTIONS
+        function updateStats() {
+            const text = state.monolog;
+            
+            // Word count
+            const words = text.trim() ? text.trim().split(/\s+/).length : 0;
+            wordCount.textContent = words;
+            
+            // Character count
+            charCount.textContent = text.length;
+        }
+
+        function updateUI() {
+            // Set mode
+            document.querySelectorAll('.mode').forEach(mode => {
+                mode.classList.toggle('active', mode.dataset.mode === state.selectedMode);
+            });
+            
+            // Set role
+            if (state.selectedRole) {
+                roleSelect.value = state.selectedRole;
+            } else {
+                roleSelect.value = state.defaultRole;
+            }
+            
+            // Set monolog
+            monologInput.value = state.monolog;
+        }
+
+        function showAlert(message) {
+            // Remove existing alert
+            const existing = document.querySelector('.alert');
+            if (existing) existing.remove();
+
+            // Create new alert
+            const alert = document.createElement('div');
+            alert.className = 'alert';
+            alert.textContent = message;
+            document.body.appendChild(alert);
+
+            // Remove after 2 seconds
+            setTimeout(() => alert.remove(), 2000);
+        }
+
+        // STORAGE
+        function saveToStorage() {
+            try {
+                localStorage.setItem('jewpt_v5', JSON.stringify(state));
+            } catch (e) {
+                console.error('Save error:', e);
+            }
+        }
+
+        function loadFromStorage() {
+            try {
+                const saved = localStorage.getItem('jewpt_v5');
+                if (saved) {
+                    const parsed = JSON.parse(saved);
+                    
+                    // Restore basic properties
+                    state.monolog = parsed.monolog || '';
+                    state.selectedRole = parsed.selectedRole || '';
+                    state.selectedMode = parsed.selectedMode || 'auto';
+                    
+                    // Restore settings
+                    state.settings = {
+                        autoSave: parsed.settings?.autoSave ?? true,
+                        darkMode: parsed.settings?.darkMode ?? window.matchMedia('(prefers-color-scheme: dark)').matches
+                    };
+                    
+                    // Restore arrays
+                    state.templates = parsed.templates || [];
+                    state.history = parsed.history || [];
+                }
+            } catch (e) {
+                console.error('Load error:', e);
+            }
+        }
+
+        // START APP
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
